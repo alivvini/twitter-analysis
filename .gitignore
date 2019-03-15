@@ -1,6 +1,7 @@
 # Ignore
 keys/**
 __pycache__/
+data/
 
 # Allow
 !keys/__init__.py

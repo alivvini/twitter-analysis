@@ -1,3 +1,4 @@
 from Tweet import Tweet
 
-tweet = Tweet.from_id("1106237080483422208")
+tweet = Tweet.from_id("1106561132490309632")
+tweet.save()

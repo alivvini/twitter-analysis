@@ -7,7 +7,8 @@ class TwitterController:
         self.api = twitter.Api(consumer_key=keys.twitter.API_KEY,
                   consumer_secret=keys.twitter.API_SECRET,
                   access_token_key=keys.twitter.ACCESS_TOKEN,
-                  access_token_secret=keys.twitter.ACCESS_TOKEN_SECRET)
+                  access_token_secret=keys.twitter.ACCESS_TOKEN_SECRET,
+                  sleep_on_rate_limit=True)
 
     def obtain_tweet(self, id):
         return self.api.GetStatus(id)
@@ -18,7 +19,7 @@ class TwitterController:
         params.append('since_id='+str(since_id))
         params.append('q=to%3A'+username+' since%3A'+since+' until%3A'+until)
         if until_id!=None:
-            params.append('until_id='+str(until_id))
+            params.append('max_id='+str(until_id))
         for param in params:
             query += ("&" + param)
         return self.api.GetSearch(raw_query=query)        

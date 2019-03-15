@@ -1,6 +1,6 @@
 from TwitterController import TwitterController
 from datetime import datetime, timedelta
-
+import json
 
 class Tweet:
 
@@ -45,6 +45,19 @@ class Tweet:
 
 
     def save(self):
-        # TODO: create a method that saves the current tweet (and all its replies into a json file)
-        pass
+        with open("data/data_"+str(self.status.id)+".json", "w") as file:
+            file.write(json.dumps(self.tweet_to_json(self)))
         
+    
+    def tweet_to_json(self, tweet):
+        json_replies = []
+        for reply in tweet.replies:
+            json_replies.append(self.tweet_to_json(reply))
+        root  = {
+            "id": tweet.status.id,
+            "screen_name": tweet.status.user.screen_name,
+            "text": tweet.status.text,
+            "num_replies":len(tweet.replies),
+            "replies": json_replies
+        }
+        return root
