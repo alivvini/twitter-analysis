@@ -1,5 +1,6 @@
 from TwitterController import TwitterController
 from datetime import datetime, timedelta
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import json
 
 
@@ -47,6 +48,19 @@ class Tweet:
         with open("data/data_" + str(self.status.id) + ".json", "w") as file:
             file.write(json.dumps(self.tweet_to_json(self)))
 
+    def get_sentiment(self, tweet):
+        analyzer = SentimentIntensityAnalyzer()
+        vs = analyzer.polarity_scores(tweet['text'])
+        compound = vs['compound']
+        sentiment = 0
+        if compound >= 0.05:
+            # Positive
+            sentiment = 1
+        elif compound <= -0.05:
+            # Negative
+            sentiment = -1
+        return sentiment
+
     def tweet_to_json(self, tweet):
         json_replies = []
         for reply in tweet.replies:
@@ -56,6 +70,7 @@ class Tweet:
             "screen_name": tweet.status.user.screen_name,
             "text": tweet.status.text,
             "num_replies": len(tweet.replies),
-            "replies": json_replies
+            "replies": json_replies,
+            "sentiment": self.get_sentiment(tweet)
         }
         return root
