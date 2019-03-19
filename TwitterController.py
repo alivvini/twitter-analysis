@@ -23,4 +23,3 @@ class TwitterController:
         for param in params:
             query += ("&" + param)
         return self.api.GetSearch(raw_query=query)        
-    

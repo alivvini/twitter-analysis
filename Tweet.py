@@ -50,7 +50,7 @@ class Tweet:
 
     def get_sentiment(self, tweet):
         analyzer = SentimentIntensityAnalyzer()
-        vs = analyzer.polarity_scores(tweet['text'])
+        vs = analyzer.polarity_scores(tweet.status.text)
         compound = vs['compound']
         sentiment = 0
         if compound >= 0.05:
@@ -71,6 +71,8 @@ class Tweet:
             "text": tweet.status.text,
             "num_replies": len(tweet.replies),
             "replies": json_replies,
-            "sentiment": self.get_sentiment(tweet)
+            "sentiment": self.get_sentiment(tweet),
+            "num_retweet": tweet.status.retweet_count,
+            "num_fav": tweet.status.favorite_count
         }
         return root
