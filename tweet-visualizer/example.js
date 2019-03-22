@@ -3,6 +3,8 @@ context = canvas.getContext("2d"),
 width = canvas.width,
 height = canvas.height;
 
+
+
 d3.csv("d3.csv", function(error, data) {
   if (error) throw error;
 
