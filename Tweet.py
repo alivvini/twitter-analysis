@@ -2,6 +2,7 @@ from TwitterController import TwitterController
 from datetime import datetime, timedelta
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import json
+import time
 
 
 class Tweet:
@@ -27,6 +28,7 @@ class Tweet:
                                                  self.created_at.strftime('%Y-%m-%d'),
                                                  self.max_date.strftime('%Y-%m-%d'),
                                                  self.status.id - 1)
+
             tweets.reverse()
             print(len(tweets))
             first = True
@@ -37,8 +39,6 @@ class Tweet:
                 if tweet.in_reply_to_status_id == self.status.id:
                     self.replies.append(Tweet(tweet))
             check = len(tweets) > 0
-
-        # TODO: Obtain the replies and save them and obtain
 
     @classmethod
     def from_id(self, id):

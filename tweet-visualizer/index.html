@@ -2,26 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Naruto</title>
+    <title>Tweet visualization</title>
     <style>
 
     .links line {
-      stroke: #999;
-      stroke-opacity: 0.6;
+      stroke: #000000;
+      stroke-opacity: 0.2;
     }
 
     .nodes circle {
-      stroke: #fff;
-      stroke-width: 1.5px;
+      stroke: rgba(165, 255, 0, 0.05);
+      stroke-width: 2px;
     }
 
     </style>
 </head>
 <body>
-    <svg width="960" height="600"></svg>
-    <!-- This is only for example.js, you need to import the d3.v4.min.js for it to work
-    <canvas width="1000" height="1000"></canvas>
-    -->
+    <svg width="2000" height="2000"></svg>
 </body>
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="tweet-forcegraph.js"></script>
