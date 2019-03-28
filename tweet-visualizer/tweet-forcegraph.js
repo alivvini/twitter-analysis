@@ -66,9 +66,56 @@ function circleColour(d){
     }
 }
 
-function size(d) {
+// Calculate Height of the tree. " gk -> paper variable."
+function maxPathLenthOfGraph(d){
+	let maximumLength =0;
+	let aux=0;
+	for (let i=0;i<d.num_replies;i++){
+		aux= maxPathLenthOfGraph(d.replies[i]);
+		maximumLength = Math.max(aux, maximumLength);
+	}
+	return maximumLength + 1;
+}
+
+//Number of childs of a given root. "c" -> paper variable
+function numberRootChilds(d){
+	return d.num_replies;
+}
+
+//Number of nodes. "nk" -> paper variable
+function totalNumberNodes(d){
+	let result = 1; // current node
+	for (let i=0;i<d.num_replies;i++){
+		result += totalNumberNodes(d.replies[i]);
+	}
+	return result;
+}
+
+//Energy of retweets or Energy of favs.
+// All retweets/favs of given tree.
+function energyNodeType(d, typeEnergy){
+	let result;
+	if(typeEnergy.equals("retweet")){
+		result = d.num_retweet;	
+	}else{
+		result = d.num_fav;
+	}
+	
+	for (let i=0;i<d.num_replies;i++){
+		result += energyNodeType(d.replies[i], typeEnergy);
+	}
+	return result;
+}
+
+
+function size(d,lambda1,lambda2,lambda3) {
     // TODO Temporal size
-    return (d.num_replies / 5) + 5
+    // just E_replies by now
+    return 5 + lambda1*(maxPathLenthOfGraph(d)*(numberRootChilds(d)+totalNumberNodes(d)))+
+	lambda2*energyNodeType(d, "retweet")+ 
+	lambda3*energyNodeType(d,"favorite" )
+
+    ;
 }
 
 function drag_start(d) {
