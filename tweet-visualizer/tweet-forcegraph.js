@@ -16,7 +16,8 @@ function populateMetadata(array, parent, currentObject) {
 
     if (currentObject != null) {
         array[0].push({'id': currentObject.id, 'screen_name': currentObject.screen_name, 'text': currentObject.text,
-            'num_replies': currentObject.num_replies, 'sentiment': currentObject.sentiment, 'num_retweet': currentObject.num_retweet,
+            'num_replies': currentObject.num_replies, 'sentiment': currentObject.sentiment, 
+            'replies': currentObject.replies,'num_retweet': currentObject.num_retweet,
             'num_fav': currentObject.num_fav});
         if (parent != null) {
             array[1].push({'source': parent.id, 'target': currentObject.id});
@@ -70,7 +71,9 @@ function circleColour(d){
 function maxPathLenthOfGraph(d){
 	let maximumLength =0;
 	let aux=0;
+	console.log(typeof(aux));
 	for (let i=0;i<d.num_replies;i++){
+		console.log(typeof(d.replies));
 		aux= maxPathLenthOfGraph(d.replies[i]);
 		maximumLength = Math.max(aux, maximumLength);
 	}
@@ -91,30 +94,36 @@ function totalNumberNodes(d){
 	return result;
 }
 
-//Energy of retweets or Energy of favs.
-// All retweets/favs of given tree.
-function energyNodeType(d, typeEnergy){
-	let result;
-	if(typeEnergy.equals("retweet")){
-		result = d.num_retweet;	
-	}else{
-		result = d.num_fav;
-	}
-	
+//Energy of retweets
+// All retweets of given tree.
+function energyRT(d){
+	let result = d.num_retweet;	
 	for (let i=0;i<d.num_replies;i++){
-		result += energyNodeType(d.replies[i], typeEnergy);
+		result += energyRT(d.replies[i]);
+	}
+	return result;
+}
+
+//Energy of favs.
+// All favs of given tree.
+function energyFAV(d){
+	let result = d.num_fav;
+	for (let i=0;i<d.num_replies;i++){
+		result += energyFAV(d.replies[i]);
 	}
 	return result;
 }
 
 
-function size(d,lambda1,lambda2,lambda3) {
+function size(d) {
+	let lambda1=1;
+	let lambda2=0;
+	let lambda3=0;
     // TODO Temporal size
     // just E_replies by now
-    return 5 + lambda1*(maxPathLenthOfGraph(d)*(numberRootChilds(d)+totalNumberNodes(d)))+
-	lambda2*energyNodeType(d, "retweet")+ 
-	lambda3*energyNodeType(d,"favorite" )
-
+    return  3+0.02*(lambda1*(maxPathLenthOfGraph(d)*(numberRootChilds(d)+totalNumberNodes(d)))+
+	lambda2*energyRT(d)+ 
+	lambda3*energyFAV(d))
     ;
 }
 
