@@ -16,7 +16,8 @@ function populateMetadata(array, parent, currentObject) {
 
     if (currentObject != null) {
         array[0].push({'id': currentObject.id, 'screen_name': currentObject.screen_name, 'text': currentObject.text,
-            'num_replies': currentObject.num_replies, 'sentiment': currentObject.sentiment, 'num_retweet': currentObject.num_retweet,
+            'num_replies': currentObject.num_replies, 'sentiment': currentObject.sentiment, 
+            'replies': currentObject.replies,'num_retweet': currentObject.num_retweet,
             'num_fav': currentObject.num_fav});
         if (parent != null) {
             array[1].push({'source': parent.id, 'target': currentObject.id});
@@ -66,9 +67,64 @@ function circleColour(d){
     }
 }
 
+// Calculate Height of the tree. " gk -> paper variable."
+function maxPathLenthOfGraph(d){
+	let maximumLength =0;
+	let aux=0;
+	console.log(typeof(aux));
+	for (let i=0;i<d.num_replies;i++){
+		console.log(typeof(d.replies));
+		aux= maxPathLenthOfGraph(d.replies[i]);
+		maximumLength = Math.max(aux, maximumLength);
+	}
+	return maximumLength + 1;
+}
+
+//Number of childs of a given root. "c" -> paper variable
+function numberRootChilds(d){
+	return d.num_replies;
+}
+
+//Number of nodes. "nk" -> paper variable
+function totalNumberNodes(d){
+	let result = 1; // current node
+	for (let i=0;i<d.num_replies;i++){
+		result += totalNumberNodes(d.replies[i]);
+	}
+	return result;
+}
+
+//Energy of retweets
+// All retweets of given tree.
+function energyRT(d){
+	let result = d.num_retweet;	
+	for (let i=0;i<d.num_replies;i++){
+		result += energyRT(d.replies[i]);
+	}
+	return result;
+}
+
+//Energy of favs.
+// All favs of given tree.
+function energyFAV(d){
+	let result = d.num_fav;
+	for (let i=0;i<d.num_replies;i++){
+		result += energyFAV(d.replies[i]);
+	}
+	return result;
+}
+
+
 function size(d) {
+	let lambda1=1;
+	let lambda2=0;
+	let lambda3=0;
     // TODO Temporal size
-    return (d.num_replies / 5) + 5
+    // just E_replies by now
+    return  3+0.02*(lambda1*(maxPathLenthOfGraph(d)*(numberRootChilds(d)+totalNumberNodes(d)))+
+	lambda2*energyRT(d)+ 
+	lambda3*energyFAV(d))
+    ;
 }
 
 function drag_start(d) {
