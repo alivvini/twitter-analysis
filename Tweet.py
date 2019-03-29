@@ -51,15 +51,7 @@ class Tweet:
     def get_sentiment(self, tweet):
         analyzer = SentimentIntensityAnalyzer()
         vs = analyzer.polarity_scores(tweet.status.text)
-        compound = vs['compound']
-        sentiment = 0
-        if compound >= 0.05:
-            # Positive
-            sentiment = 1
-        elif compound <= -0.05:
-            # Negative
-            sentiment = -1
-        return sentiment
+        return vs['compound']
 
     def tweet_to_json(self, tweet):
         json_replies = []
