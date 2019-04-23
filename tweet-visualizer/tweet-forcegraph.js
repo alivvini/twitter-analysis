@@ -56,12 +56,7 @@ function tickActions() {
 
 function circleColour(d){
     // TODO Create a function to give an average of the sentiments
-    let sentiment;
-    if (d.id === testjson.id) {
-        sentiment = totalSentiment(d) / totalNumberNodes(d);
-    } else {
-        sentiment = d.sentiment;
-    }
+    let sentiment = d.sentiment;
 
     if(sentiment < -0.05) {
         let green = 255 * (1+sentiment);
@@ -121,20 +116,31 @@ function energyFAV(d){
 	return result;
 }
 
-function totalSentiment(d) {
-    // 0 will be the total sentiment, and 1 will be the number of replies
-    let arr = [0.0, 0.0];
-    recursiveTotalSentiment(d, arr);
-    return arr;
+function getRepliesSentiment(d) {
+    if (d.id === testjson.id) {
+        let overallSentiment = recursiveTotalSentiment(d) / totalNumberNodes(d);
+        console.log("Replies Sentiment --> " + overallSentiment);
+        let thing = {
+            sentiment: overallSentiment
+        };
+        let naruto = circleColour(thing);
+        console.log(naruto);
+        return naruto;
+    }
 }
 
-function recursiveTotalSentiment(d, arr) {
-    arr[0] = d.sentiment;
-    for (let i = 0; i < d.num_replies; i++) {
-        arr[0] += totalSentiment(d.replies[i]);
-        arr[1] += 1;
+function getStrokeWidth(d) {
+    if (d.id === testjson.id) {
+        return 3;
     }
-    return arr[1];
+}
+
+function recursiveTotalSentiment(d) {
+    let result = d.sentiment;
+    for (let i = 0; i < d.num_replies; i++) {
+        result += recursiveTotalSentiment(d.replies[i]);
+    }
+    return result;
 }
 
 
@@ -214,7 +220,9 @@ let node = svg.append("g")
         .attr("cx", function(d) {return(d.x)})
         .attr("cy", function(d) {return(d.y)})
         .attr("r", size)
-        .attr("fill", circleColour);
+        .attr("fill", circleColour)
+        .style("stroke-width", getStrokeWidth)
+        .style("stroke", getRepliesSentiment);
 
 let drag_handler = d3.drag()
     .on("start", drag_start)
